@@ -14,6 +14,19 @@ server.use(express.urlencoded({ extended: false }));
 server.use("/", indexRoutes);
 server.use("/characters", characterRoutes);
 
+server.use("*", (req, res) => {
+  const error = new Error("Ruta no encontrada error 404");
+  error.status = 400;
+  return res.status(error.status).json(error.message);
+});
+
+server.use((error, req, res, next) => {
+  console.log(error.message);
+  return res
+    .status(error.status || 500)
+    .json(error.message || "unexpected error");
+});
+
 server.listen(PORT, () => {
   console.log(`Servidor en http://localhost:${PORT}`);
 });
